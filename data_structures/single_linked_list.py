@@ -1,4 +1,3 @@
-
 class LinkedList:
     # Initializes an empty linked list. null value == None
     def __init__(self):
@@ -109,13 +108,13 @@ class LinkedList:
         return length
 
     # Return the length of a given linked list. Done recursively
-    def len_recursive(self,node):
+    def len_recursive(self, node):
         if node is None:
             return 0
         return 1 + self.len_recursive(node.next)
 
     # Swap two nodes with given key_1 and key_2
-    def swap_nodes(self,key_1,key_2):
+    def swap_nodes(self, key_1, key_2):
         # Check to see if the two nodes to swap are the same node
         if key_1 == key_2:
             return
@@ -156,11 +155,11 @@ class LinkedList:
 
     # Used to keep track of what node is being worked during an iterative process.
     # Name is the type of node we are looking at. Can be current node or previous, ect..
-    def print_helper(self,node,name):
-            if node is None:
-                print(name + ': None')
-            else:
-                print(name + ':' + node.data)
+    def print_helper(self, node, name):
+        if node is None:
+            print(name + ': None')
+        else:
+            print(name + ':' + node.data)
 
     # Visualiztion of what we are trying to do reversing list
     # A -> B -> C -> D -> 0
@@ -189,7 +188,7 @@ class LinkedList:
     def reverse_recursive(self):
 
         # A recursive helper function, used like the while loop of iterative implementaion
-        def _reverse_recursive(current,prior):
+        def _reverse_recursive(current, prior):
             if not current:
                 return prior
             next = current.next
@@ -211,7 +210,7 @@ class LinkedList:
     # This function will combine the first_list.merge_lists(second_list)
     # Requires that the lists are already sorted
     # Returns a new sorted list, a combination of the two input lists.
-    def merge_sorted(self,list2):
+    def merge_sorted(self, list2):
         list1_current = self.head
         list2_current = list2.head
         merged_llist = LinkedList()
@@ -250,6 +249,7 @@ class LinkedList:
     # Keeps the first element, deletes repeats
     def remove_duplicates(self):
         current = self.head
+        to_be_removed = []
         prior = None
         # Keep track of the values we have already seen
         seen = []
@@ -276,7 +276,7 @@ class LinkedList:
 
     # This fuction will return the nth to last node in the linke list
     # Example: n = 1 is  the last, n = 2 will give the second (to) last element, and so on
-    def nth_to_last(self,n):
+    def nth_to_last(self, n):
         # If we get a postiion that is not in the list we want to send an error message
         if self.len_iterative() - n < 0:
             print('ERROR, need to give a node within the size of {}'.format(self.len_iterative()))
@@ -285,20 +285,17 @@ class LinkedList:
         else:
             current = self.head
             # We go through the list until we get to the element we want to return
-            for _ in range( self.len_iterative() - n):
+            for _ in range(self.len_iterative() - n):
                 current = current.next
             return current.data
 
     # This function will count the amount of occurances in a linked list
-    def count_occurances_iteratively(self,data):
+    def count_occurances_iteratively(self, data):
         pass
 
     # This function will count the amount of occurances in a linked list
-    def count_occurances_recursively(self,data):
+    def count_occurances_recursively(self, data):
         pass
-
-
-
 
 
 # The Node. Linked lists are made of nodes with a data field and a next field.
@@ -306,6 +303,7 @@ class Node:
     def __init__(self, data):
         self.data = data
         self.next = None
+
 
 '''
 llist = LinkedList()
@@ -367,8 +365,8 @@ print()
 llist.reverse_recursive()
 llist.print_list()
 print()
-'''
-'''
+
+
 #initialize two linked lists to be merged
 first = LinkedList()
 first.append('a')
@@ -404,8 +402,8 @@ print()
 merged_list = first.merge_sorted(second)
 print()
 merged_list.print_list()
-'''
-'''
+
+
 duplicates = LinkedList()
 duplicates.append('A')
 duplicates.append('A')
@@ -421,8 +419,8 @@ print()
 duplicates.remove_duplicates()
 duplicates.print_list()
 print()
-'''
-'''
+
+
 llist = LinkedList()
 llist.append('A')
 llist.append('B')
