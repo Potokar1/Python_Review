@@ -291,17 +291,206 @@ class LinkedList:
 
     # This function will count the amount of occurances in a linked list
     def count_occurances_iteratively(self, data):
+        # We get the list head so we can step through the linked list
         current = self.head
+        # At first our count for how many data elements in the llist is zero
         count = 0
+        # keep going through the list until we reach the end (end is current == null)
         while current:
+            # If the current node in the LList matches the given data specification
             if current.data == data:
+                # Increase the count
                 count += 1
+            # Get the next node in the linked list
             current = current.next
+        # Return count after we have reached the end of the linked list
         return count
 
     # This function will count the amount of occurances in a linked list
     def count_occurances_recursively(self, data):
-        pass
+        # Get the list head from the llist
+        node = self.head
+        # recursive helper method. Notice, takes node and data not self and data
+        def _count_occurances_recursively(node,data):
+            # Notice how this looks a lot like the iterative method. Not very 'recursive'
+            count = 0
+            if node and node.data == data:
+                    count += 1
+            if node.next:
+                count += _count_occurances_recursively(node.next,data)
+            return count
+        # This is actually the first instance of using the helper method defined above
+        return _count_occurances_recursively(node, data)
+
+    # This is a more simple and elengent version of the recursive count function
+    def count_occurances_recursively_simple(self,node,data):
+        # Base case: if the node is null, ie we are at the end of the llist
+        if not node:
+            # Return zero because null !- data
+            return 0
+        # 'Yes Case' return 1 plus a call to the method with the next node from the llist
+        if node.data == data:
+            # Return 1 plus the amount returned by the call with the rest of the llist
+            return 1 + self.count_occurances_recursively_simple(node.next, data)
+        # 'No Case' only return call to the method with the next node from the llist
+        else:
+            # Return what is left in the list becuase the current node wasn't a match
+            return self.count_occurances_recursively_simple(node.next, data)
+
+    # We want to 'rotate' the list about the nth element.
+    # so 1,2,3,4,5 -> rotate about 3rd element -> 4,5,1,2,3
+    def rotate_list_about_nth(self,index):
+        # Current will eventually hold the node that we rotate around
+        current = self.head
+        old_head = self.head
+        # index -1 becuase we want the nth node not the next node after the nth
+        for _ in range(index -1):
+            current = current.next
+        # Now current is the node we want at the end of our list.
+        # The next node (or index plus one) will be the new list head
+        new_head = current.next
+        # Now we set the next node to null becuase this is the end to the new rotated llist
+        current.next = None
+        self.head = new_head
+        # This is the last node from before we did a rotation
+        # Now this will be the node right before the beginning of the list before rotation
+        old_last = new_head
+        # Now we want to get to the end of the list, so we can append the old end to the old beginning
+        # .next because we don't want the null node we want the node before the null node
+        while old_last.next:
+            old_last = old_last.next
+        # Now we have the last node in the llist, The next node is the null end node.
+        # So we take the old list head and put the element up to the rotation node on the end
+        old_last.next = old_head
+
+    def is_palindrome(self):
+        '''
+        # Method 1: Using a string and the one liner for reverse strings
+        s = ''
+        # Pointer to the head of the list
+        p = self.head
+        # Store the list into a string
+        while p:
+            s += p.data
+            p = p.next
+        # Now s should contain the entire list in string form
+        # This s[::-1] is the python one liner to check for palindromes (reverses list)
+        return s == s[::-1]
+        '''
+        '''
+        # Method 2: Using a list and the append and pop methods (like a stack)
+        p = self.head
+        # This is basically the stack we are using to reverse the list
+        s = []
+        # Store all the elements in the 'stack' so they will be popped in reveres order
+        while p:
+            s.append(p.data)
+            p = p.next
+        p = self.head
+        # This is where we compare each pop with the original list to see if it is palindrome
+        while p:
+            # Pop the top element off the stack, First iteration it is the last element
+            data = s.pop()
+            # If they are not the same, Then it is not a palindrome, exit by returning false
+            if p.data != data:
+                return False
+            p = p.next
+        # If we never return false, then we return true: is a palindrome
+        return True
+        '''
+        # Method 3: two pointers (one for the head and one for the end,) + a prior pointer
+        p = self.head
+        q = self.head
+        prior = []
+
+        # A count so we can look at the individual nodes in the llist in reverse order
+        i = 0
+        # Get q to the last node in the llist
+        while q:
+            # append each node q to a list as we march along the llist
+            prior.append(q)
+            q = q.next
+            i += 1
+        # Set q back to the last element and not the null element at the end of llist
+        q = prior[i-1]
+
+        count = 1
+        # We will only run this for i BASH 2 + 1 becuase we don't want to look at extra elements
+        while count <= i//2 + 1:
+            # This is how we can access the reverese of the list we just made
+            # The last element is -1, then the second last is -2 and so on
+            if prior[-count].data != p.data:
+                return False
+            p = p.next
+            count += 1
+        return True
+
+    def move_tail_to_head(self):
+        # p for the head pointer
+        p = self.head
+        # q for the tail pointer
+        q = self.head
+        prior = None
+        # Get the tail pointer to point at the tail
+        while q.next:
+            prior = q
+            q = q.next
+        # The switcheroo
+        q.next = p.next
+        p.next = None
+        prior.next = p
+        self.head = q
+
+    # We are going to be adding two llists together. Note that the least sig digit
+    # is stored in the first entry, so the number is 'backwards' with how it's stored
+    def sum_of_two(self,list2):
+        # List head of the first llist
+        p = self.head
+        # List head of the second llist
+        q = list2.head
+        # Now we do addition, and we have to keep track of carry in's and outs
+        carry_in = 0
+        carry_out = 0
+        temp_sum = 0
+        sum = 0
+        i = 0
+        # first entry plus the second entry
+        while p and q:
+            carry_in = carry_out
+            temp_sum = p.data + q.data + carry_in
+            if temp_sum > 9:
+                carry_out = 1
+                temp_sum -= 10
+            else:
+                carry_out = 0
+            sum += temp_sum * (10 ** i)
+            i += 1
+            p = p.next
+            q = q.next
+        # Now we have to account for the rest of the nodes, if any in either list
+        while p:
+            carry_in = carry_out
+            temp_sum = p.data + carry_in
+            if temp_sum > 9:
+                carry_out = 1
+                temp_sum -= 10
+            else:
+                carry_out = 0
+            sum += temp_sum * (10 ** i)
+            i += 1
+            p = p.next
+        while q:
+            carry_in = carry_out
+            temp_sum = q.data + carry_in
+            if temp_sum > 9:
+                carry_out = 1
+                temp_sum -= 10
+            else:
+                carry_out = 0
+            sum += temp_sum * (10 ** i)
+            i += 1
+            q = q.next
+        return sum
 
 
 # The Node. Linked lists are made of nodes with a data field and a next field.
@@ -434,7 +623,7 @@ llist.append('C')
 llist.append('D')
 print(llist.nth_to_last(4))
 '''
-
+'''
 llist = LinkedList()
 llist.append('A')
 llist.append('A')
@@ -447,3 +636,78 @@ llist.append('C')
 llist.append('D')
 print(llist.count_occurances_iteratively('A'))
 print(llist.count_occurances_recursively('A'))
+print(llist.count_occurances_recursively_simple(llist.head,'A'))
+'''
+'''
+llist = LinkedList()
+llist.append('A')
+llist.append('A')
+llist.append('B')
+llist.append('B')
+llist.append('C')
+llist.append('C')
+llist.append('D')
+llist.append('D')
+llist.rotate_list_about_nth(3)
+llist.print_list()
+'''
+'''
+llist1 = LinkedList()
+llist1.append('R')
+llist1.append('A')
+llist1.append('D')
+llist1.append('A')
+llist1.append('R')
+llist2 = LinkedList()
+llist2.append('A')
+llist2.append('B')
+llist2.append('C')
+llist3 = LinkedList()
+llist3.append('A')
+llist3.append('N')
+llist3.append('U')
+llist3.append('T')
+llist3.append('F')
+llist3.append('O')
+llist3.append('R')
+llist3.append('A')
+llist3.append('J')
+llist3.append('A')
+llist3.append('R')
+llist3.append('O')
+llist3.append('F')
+llist3.append('T')
+llist3.append('U')
+llist3.append('N')
+llist3.append('A')
+print(llist1.is_palindrome())
+print(llist2.is_palindrome())
+print(llist3.is_palindrome())
+'''
+'''
+llist = LinkedList()
+llist.append('A')
+llist.append('B')
+llist.append('C')
+llist.append('D')
+llist.append('A')
+llist.append('B')
+llist.append('C')
+llist.append('D')
+llist.move_tail_to_head()
+llist.print_list()
+'''
+'''
+llist = LinkedList()
+llist.append(9)
+llist.append(9)
+llist.append(9)
+llist.append(9)
+llist.append(9)
+llist.append(1)
+llist2 = LinkedList()
+llist2.append(9)
+llist2.append(9)
+llist2.append(9)
+print(llist.sum_of_two(llist2))
+'''
