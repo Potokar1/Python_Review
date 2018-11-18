@@ -291,7 +291,13 @@ class LinkedList:
 
     # This function will count the amount of occurances in a linked list
     def count_occurances_iteratively(self, data):
-        pass
+        current = self.head
+        count = 0
+        while current:
+            if current.data == data:
+                count += 1
+            current = current.next
+        return count
 
     # This function will count the amount of occurances in a linked list
     def count_occurances_recursively(self, data):
@@ -428,3 +434,16 @@ llist.append('C')
 llist.append('D')
 print(llist.nth_to_last(4))
 '''
+
+llist = LinkedList()
+llist.append('A')
+llist.append('A')
+llist.append('B')
+llist.append('C')
+llist.append('D')
+llist.append('A')
+llist.append('B')
+llist.append('C')
+llist.append('D')
+print(llist.count_occurances_iteratively('A'))
+print(llist.count_occurances_recursively('A'))
